@@ -101,7 +101,7 @@ def depthFirstSearch(problem):
     stack.push(actual_node)
 
     while not stack.isEmpty():
-        actual_node = stack.pop() #no needed for the first node but yes for the next nodes
+        actual_node = stack.pop()
         if actual_node['state'] not in visited:
             visited.add(actual_node['state'])
         #print actual_node
@@ -110,19 +110,17 @@ def depthFirstSearch(problem):
             break
 
         for successor in problem.getSuccessors(actual_node['state']):
-            if successor[0] not in visited:
+            if successor[0] not in visited: #if its visited it wont create a new one, so in the next loop we will pop the one before
                 child_node = {'state': successor[0], 'parent':actual_node , 'action':successor[1]}
                 stack.push(child_node)
-    #now we have the moves in 'action' of each node
-
-
-
+    
+    #now we have the moves in 'action' of each node, just keep it in a list and reverse it.
     actions = []
     while actual_node['action'] != None:
         actions.append(actual_node['action'])
         actual_node = actual_node['parent']
 
-    
+
     actions.reverse()
     print actions
 
@@ -132,6 +130,40 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+
+    queue = util.Queue()
+
+    #a dictionary for the actual node, to know at every moment his state, his parent, his next action and if it has visited.
+    actual_node = {'state': problem.getStartState() , 'parent': None , 'action': None} 
+
+    visited = set()
+    queue.push(actual_node)
+
+    while not queue.isEmpty():
+        actual_node = queue.pop()
+        if actual_node['state'] not in visited:
+            visited.add(actual_node['state'])
+        #print actual_node
+
+        if problem.isGoalState(actual_node['state']): #if its the last one
+            break
+
+        for successor in problem.getSuccessors(actual_node['state']):
+            if successor[0] not in visited: #if its visited it wont create a new one, so in the next loop we will pop the one before
+                child_node = {'state': successor[0], 'parent':actual_node , 'action':successor[1]}
+                queue.push(child_node)
+    
+    #now we have the moves in 'action' of each node, just keep it in a list and reverse it.
+    actions = []
+    while actual_node['action'] != None:
+        actions.append(actual_node['action'])
+        actual_node = actual_node['parent']
+
+
+    actions.reverse()
+    print actions
+
+    return actions
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
