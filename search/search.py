@@ -120,17 +120,16 @@ def depthFirstSearch(problem):
         actions.append(actual_node['action'])
         actual_node = actual_node['parent']
 
-
     actions.reverse()
-    print actions
-
     return actions
+
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
 
+    #now we use queues (FIFO)
     queue = util.Queue()
 
     #a dictionary for the actual node, to know at every moment his state, his parent, his next action and if it has visited.
@@ -145,15 +144,14 @@ def breadthFirstSearch(problem):
             visited.add(actual_node['state'])
         #print actual_node
 
-        if problem.isGoalState(actual_node['state']): #if its the last one
+        if problem.isGoalState(actual_node['state']): 
             break
 
         for successor in problem.getSuccessors(actual_node['state']):
-            if successor[0] not in visited: #if its visited it wont create a new one, so in the next loop we will pop the one before
+            if successor[0] not in visited: 
                 child_node = {'state': successor[0], 'parent':actual_node , 'action':successor[1]}
                 queue.push(child_node)
     
-    #now we have the moves in 'action' of each node, just keep it in a list and reverse it.
     actions = []
     while actual_node['action'] != None:
         actions.append(actual_node['action'])
@@ -161,7 +159,7 @@ def breadthFirstSearch(problem):
 
 
     actions.reverse()
-    print actions
+    #print actions
 
     return actions
     util.raiseNotDefined()
@@ -169,6 +167,41 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+
+    priqueue = util.PriorityQueue()
+
+    #we add a new attribute in the dictionary 'cost' to know the actual cost of the path in this node
+    actual_node = {'state': problem.getStartState() , 'parent': None , 'action': None, 'cost':0} 
+
+    visited = set()
+    priqueue.push(actual_node, actual_node['cost'])
+
+    while not priqueue.isEmpty():
+        actual_node = priqueue.pop()
+        if actual_node['state'] not in visited:
+            visited.add(actual_node['state'])
+        
+        #print actual_node
+        if problem.isGoalState(actual_node['state']):
+            break
+
+        for successor in problem.getSuccessors(actual_node['state']):
+            if successor[0] not in visited: #if has not been visited we create a new child and now with the cost attribute + the actual cost of the current path (saved in the cost of the parent node)
+                child_node = {'state': successor[0], 'parent':actual_node , 'action':successor[1] , 'cost':successor[2] + actual_node['cost']}
+                priqueue.push(child_node, actual_node['cost'])
+    
+    #now we have the moves in 'action' of each actual_node, just save it in a list and reverse it.
+    actions = []
+    while actual_node['action'] != None:
+        actions.append(actual_node['action'])
+        actual_node = actual_node['parent']
+
+
+    actions.reverse()
+    #print actions
+
+    return actions
+
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
