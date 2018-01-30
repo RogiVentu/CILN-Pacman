@@ -94,8 +94,9 @@ def depthFirstSearch(problem):
 
     stack = util.Stack()
 
-    #a dictionary for the actual node, to know at every moment his state, his parent, his next action and if it has visited.
+    #a dictionary for the actual node, to know at every moment his state, his parent and his next action
     actual_node = {'state': problem.getStartState() , 'parent': None , 'action': None} 
+    goal_node = {} #we will save the goal state on this node
 
     visited = set()
     stack.push(actual_node)
@@ -107,6 +108,7 @@ def depthFirstSearch(problem):
         #print actual_node
 
         if problem.isGoalState(actual_node['state']): #if its the last one
+            goal_node = actual_node # we got the final path! keep the last node to the goal_node dictionary
             break
 
         for successor in problem.getSuccessors(actual_node['state']):
@@ -115,13 +117,13 @@ def depthFirstSearch(problem):
                 stack.push(child_node)
     
     #now we have the moves in 'action' of each node, just keep it in a list and reverse it.
-    actions = []
-    while actual_node['action'] != None:
-        actions.append(actual_node['action'])
-        actual_node = actual_node['parent']
+    path = []
+    while goal_node['action'] != None:
+        path.append(goal_node['action'])
+        goal_node = goal_node['parent']
 
-    actions.reverse()
-    return actions
+    path.reverse()
+    return path
 
     util.raiseNotDefined()
 
@@ -132,8 +134,8 @@ def breadthFirstSearch(problem):
     #now we use queues (FIFO)
     queue = util.Queue()
 
-    #a dictionary for the actual node, to know at every moment his state, his parent, his next action and if it has visited.
     actual_node = {'state': problem.getStartState() , 'parent': None , 'action': None} 
+    goal_node = {}
 
     visited = set()
     queue.push(actual_node)
@@ -144,7 +146,8 @@ def breadthFirstSearch(problem):
             visited.add(actual_node['state'])
         #print actual_node
 
-        if problem.isGoalState(actual_node['state']): 
+        if problem.isGoalState(actual_node['state']):
+            goal_node = actual_node
             break
 
         for successor in problem.getSuccessors(actual_node['state']):
@@ -152,16 +155,16 @@ def breadthFirstSearch(problem):
                 child_node = {'state': successor[0], 'parent':actual_node , 'action':successor[1]}
                 queue.push(child_node)
     
-    actions = []
-    while actual_node['action'] != None:
-        actions.append(actual_node['action'])
-        actual_node = actual_node['parent']
+    path = []
+    while goal_node['action'] != None:
+        path.append(goal_node['action'])
+        goal_node = goal_node['parent']
 
 
-    actions.reverse()
-    #print actions
+    path.reverse()
+    #print path
 
-    return actions
+    return path
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
@@ -172,6 +175,7 @@ def uniformCostSearch(problem):
 
     #we add a new attribute in the dictionary 'cost' to know the actual cost of the path in this node
     actual_node = {'state': problem.getStartState() , 'parent': None , 'action': None, 'cost':0} 
+    goal_node = {}
 
     visited = set()
     priqueue.push(actual_node, actual_node['cost'])
@@ -183,24 +187,26 @@ def uniformCostSearch(problem):
         
         #print actual_node
         if problem.isGoalState(actual_node['state']):
+            goal_node = actual_node
             break
 
         for successor in problem.getSuccessors(actual_node['state']):
             if successor[0] not in visited: #if has not been visited we create a new child and now with the cost attribute + the actual cost of the current path (saved in the cost of the parent node)
                 child_node = {'state': successor[0], 'parent':actual_node , 'action':successor[1] , 'cost':successor[2] + actual_node['cost']}
-                priqueue.push(child_node, actual_node['cost'])
+                priqueue.push(child_node, child_node['cost'])
     
     #now we have the moves in 'action' of each actual_node, just save it in a list and reverse it.
-    actions = []
-    while actual_node['action'] != None:
-        actions.append(actual_node['action'])
-        actual_node = actual_node['parent']
+    path = []
+    while goal_node['action'] != None:
+        path.append(goal_node['action'])
+        print goal_node['cost']
+        goal_node = goal_node['parent']
 
 
-    actions.reverse()
-    #print actions
+    path.reverse()
+    #print path
 
-    return actions
+    return path
 
     util.raiseNotDefined()
 
@@ -214,6 +220,42 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+
+    priqueue = util.PriorityQueue()
+
+    actual_node = {'state': problem.getStartState() , 'parent': None , 'action': None, 'cost':0, 'value':heuristic(problem.getStartState(),problem)} 
+    goal_node = {}
+    visited = set()
+    priqueue.push(actual_node, actual_node['cost'] + actual_node['value'])
+
+
+    while not priqueue.isEmpty():
+        actual_node = priqueue.pop()
+        if actual_node['state'] not in visited:
+            visited.add(actual_node['state'])
+        
+        #print actual_node
+        if problem.isGoalState(actual_node['state']):
+            goal_node = actual_node
+            break
+
+        for successor in problem.getSuccessors(actual_node['state']):
+            if successor[0] not in visited: #if has not been visited we create a new child and now with the cost attribute + the actual cost of the current path (saved in the cost of the parent node)
+                child_node = {'state': successor[0], 'parent':actual_node , 'action':successor[1] , 'cost':successor[2] + actual_node['cost'] , 'value':heuristic(successor[0],problem)}
+                priqueue.push(child_node, child_node['cost'] + actual_node['value'])
+    
+    #now we have the moves in 'action' of each actual_node, just save it in a list and reverse it.
+    path = []
+    while goal_node['action'] != None:
+        path.append(goal_node['action'])
+        print goal_node['value']
+        goal_node = goal_node['parent']
+
+
+    path.reverse()
+    #print path
+
+    return path
     util.raiseNotDefined()
 
 
