@@ -88,24 +88,20 @@ def depthFirstSearch(problem):
     """
     "*** YOUR CODE HERE ***"
 
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-
     stack = util.Stack()
 
     #a dictionary for the actual node, to know at every moment his state, his parent and his next action
     actual_node = {'state': problem.getStartState() , 'parent': None , 'action': None} 
-    goal_node = {} #we will save the goal state on this node
+    goal_node = {} #we will save the goal state node on this node
 
     visited = set()
     stack.push(actual_node)
 
     while not stack.isEmpty():
         actual_node = stack.pop()
-        if actual_node['state'] not in visited:
-            visited.add(actual_node['state'])
-        #print actual_node
+        if actual_node['state'] in visited:
+            continue
+        visited.add(actual_node['state'])
 
         if problem.isGoalState(actual_node['state']): #if its the last one
             goal_node = actual_node # we got the final path! keep the last node to the goal_node dictionary
@@ -116,7 +112,7 @@ def depthFirstSearch(problem):
                 child_node = {'state': successor[0], 'parent':actual_node , 'action':successor[1]}
                 stack.push(child_node)
     
-    #now we have the moves in 'action' of each node, just keep it in a list and reverse it.
+    #now we have the moves in 'action' of each goal_node, just save it in a list and reverse it.
     path = []
     while goal_node['action'] != None:
         path.append(goal_node['action'])
@@ -131,7 +127,7 @@ def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
 
-    #now we use queues (FIFO)
+    #now we use queues (FIFO) Same as dfs but with queue
     queue = util.Queue()
 
     actual_node = {'state': problem.getStartState() , 'parent': None , 'action': None} 
@@ -142,9 +138,9 @@ def breadthFirstSearch(problem):
 
     while not queue.isEmpty():
         actual_node = queue.pop()
-        if actual_node['state'] not in visited:
-            visited.add(actual_node['state'])
-        #print actual_node
+        if actual_node['state'] in visited:
+            continue
+        visited.add(actual_node['state'])
 
         if problem.isGoalState(actual_node['state']):
             goal_node = actual_node
@@ -182,8 +178,9 @@ def uniformCostSearch(problem):
 
     while not priqueue.isEmpty():
         actual_node = priqueue.pop()
-        if actual_node['state'] not in visited:
-            visited.add(actual_node['state'])
+        if actual_node['state'] in visited:
+            continue
+        visited.add(actual_node['state'])
         
         #print actual_node
         if problem.isGoalState(actual_node['state']):
@@ -195,11 +192,10 @@ def uniformCostSearch(problem):
                 child_node = {'state': successor[0], 'parent':actual_node , 'action':successor[1] , 'cost':successor[2] + actual_node['cost']}
                 priqueue.push(child_node, child_node['cost'])
     
-    #now we have the moves in 'action' of each actual_node, just save it in a list and reverse it.
+    #now we have the moves in 'action' of each , just save it in a list and reverse it.
     path = []
     while goal_node['action'] != None:
         path.append(goal_node['action'])
-        print goal_node['cost']
         goal_node = goal_node['parent']
 
 
@@ -231,10 +227,10 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     while not priqueue.isEmpty():
         actual_node = priqueue.pop()
-        if actual_node['state'] not in visited:
-            visited.add(actual_node['state'])
+        if actual_node['state'] in visited:
+            continue
+        visited.add(actual_node['state'])
         
-        #print actual_node
         if problem.isGoalState(actual_node['state']):
             goal_node = actual_node
             break
@@ -244,7 +240,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 child_node = {'state': successor[0], 'parent':actual_node , 'action':successor[1] , 'cost':successor[2] + actual_node['cost'] , 'value':heuristic(successor[0],problem)}
                 priqueue.push(child_node, child_node['cost'] + actual_node['value'])
     
-    #now we have the moves in 'action' of each actual_node, just save it in a list and reverse it.
+    
     path = []
     while goal_node['action'] != None:
         path.append(goal_node['action'])

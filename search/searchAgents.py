@@ -288,7 +288,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        self.visited_corners = [0,0,0,0]
+        self.visited_corners = set()
 
     def getStartState(self):
         """
@@ -296,7 +296,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return self.startingPosition
+        return (self.startingPosition, self.visited_corners) #getStartState will return the initial position and the status of the 4 corners.
         util.raiseNotDefined()
 
     def isGoalState(self, state):
@@ -304,18 +304,7 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        if self.corners == [1,1,1,1]:
-            isGoal = True
-        isGoal = False
-
-        if isGoal:
-            self._visitedlist.append(state)
-            import __main__
-            if '_display' in dir(__main__):
-                if 'drawExpandedCells' in dir(__main__._display): #@UndefinedVariable
-                    __main__._display.drawExpandedCells(self._visitedlist) #@UndefinedVariable
-
-        return isGoal
+        return len(state[1]) == 4
 
         util.raiseNotDefined()
 
@@ -341,10 +330,19 @@ class CornersProblem(search.SearchProblem):
 
             "*** YOUR CODE HERE ***"
 
-            x,y = state[0], state[1]
+            x,y = state[0]
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]
+
+            if not hitsWall:
+                #vc = list(self.visited_corners)
+                nextState = (nextx, nexty)
+                if nextState in self.corners: #if next state is one of the 4 corners
+                    if nextState not in self.visited_corners: #if we didnt visited it before
+                        self.visited_corners.add(nextState)
+                successors.append((nextState, self.visited_corners),action,1)#so now state has one more item, we need it on state for the goal function
+
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
