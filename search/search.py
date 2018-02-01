@@ -133,14 +133,14 @@ def breadthFirstSearch(problem):
     actual_node = {'state': problem.getStartState() , 'parent': None , 'action': None} 
     goal_node = {}
 
-    visited = set()
+    visited = []
     queue.push(actual_node)
 
     while not queue.isEmpty():
         actual_node = queue.pop()
         if actual_node['state'] in visited:
             continue
-        visited.add(actual_node['state'])
+        visited.append(actual_node['state'])
 
         if problem.isGoalState(actual_node['state']):
             goal_node = actual_node

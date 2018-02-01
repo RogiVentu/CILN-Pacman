@@ -288,7 +288,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        self.visited_corners = set()
+        self.visited_corners = []
 
     def getStartState(self):
         """
@@ -340,8 +340,8 @@ class CornersProblem(search.SearchProblem):
                 nextState = (nextx, nexty)
                 if nextState in self.corners: #if next state is one of the 4 corners
                     if nextState not in self.visited_corners: #if we didnt visited it before
-                        self.visited_corners.add(nextState)
-                successors.append((nextState, self.visited_corners),action,1)#so now state has one more item, we need it on state for the goal function
+                        self.visited_corners.append(nextState)
+                successors.append(((nextState, self.visited_corners),action,1))#so now state has one more item, we need it on state for the goal function
 
 
         self._expanded += 1 # DO NOT CHANGE
