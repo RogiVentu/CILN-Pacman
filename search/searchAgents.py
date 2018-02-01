@@ -335,7 +335,7 @@ class CornersProblem(search.SearchProblem):
             hitsWall = self.walls[nextx][nexty]
 
             if not hitsWall: 
-                actual_vc = list(state[1])#list with actual visited corners
+                actual_vc = list(state[1])# list with actual visited corners
                 nextState = (nextx, nexty)
                 if nextState in self.corners: #if next state is one of the 4 corners
                     if nextState not in actual_vc: #if we didnt visited it before

@@ -238,13 +238,12 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         for successor in problem.getSuccessors(actual_node['state']):
             if successor[0] not in visited: #if has not been visited we create a new child and now with the cost attribute + the actual cost of the current path (saved in the cost of the parent node)
                 child_node = {'state': successor[0], 'parent':actual_node , 'action':successor[1] , 'cost':successor[2] + actual_node['cost'] , 'value':heuristic(successor[0],problem)}
-                priqueue.push(child_node, child_node['cost'] + actual_node['value'])
+                priqueue.push(child_node, child_node['cost'] + child_node['value'])
     
     
     path = []
     while goal_node['action'] != None:
         path.append(goal_node['action'])
-        print goal_node['value']
         goal_node = goal_node['parent']
 
 
