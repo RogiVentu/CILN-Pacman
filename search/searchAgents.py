@@ -318,7 +318,6 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
@@ -335,13 +334,13 @@ class CornersProblem(search.SearchProblem):
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]
 
-            if not hitsWall:
-                #vc = list(self.visited_corners)
+            if not hitsWall: 
+                actual_vc = list(state[1])#list with actual visited corners
                 nextState = (nextx, nexty)
                 if nextState in self.corners: #if next state is one of the 4 corners
-                    if nextState not in self.visited_corners: #if we didnt visited it before
-                        self.visited_corners.append(nextState)
-                successors.append(((nextState, self.visited_corners),action,1))#so now state has one more item, we need it on state for the goal function
+                    if nextState not in actual_vc: #if we didnt visited it before
+                        actual_vc.append(nextState)
+                successors.append(((nextState, actual_vc),action,1))#so now state has one more item, we need it on state for the goal function
 
 
         self._expanded += 1 # DO NOT CHANGE
