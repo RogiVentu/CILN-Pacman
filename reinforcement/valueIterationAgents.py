@@ -54,8 +54,8 @@ class ValueIterationAgent(ValueEstimationAgent):
                     aux[s] = 0
                 else:
                     actions = self.mdp.getPossibleActions(s)
-                    aux[s] = self.getQValue(s, actions[0])
-                    for a in actions:
+                    aux[s] = self.getQValue(s, actions[0])#by default the first action qvalue is saved in aux
+                    for a in actions:#we check in all possible actions, the qvalue of s' and select de max one.
                         aux_qval = self.getQValue(s, a)
                         if aux_qval > aux[s]:
                             aux[s] = aux_qval 
@@ -77,11 +77,10 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-
         #Q*(s,a) = SUM Pa(s'|s) [r(s,a,s') + d*V(s')]
         qval_sum = 0
         states_probs = self.mdp.getTransitionStatesAndProbs(state,action)
-        for nextState, prob in states_probs:
+        for nextState, prob in states_probs: 
             qval_sum += prob * (self.mdp.getReward(state,action,nextState) + self.discount * self.values[nextState])
 
         return qval_sum
@@ -106,7 +105,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         for action in self.mdp.getPossibleActions(state):
             policy = self.computeQValueFromValues(state,action)
             if policy > aux:
-                act = action
+                act = action#we get the action with the higher QValue and then return it
                 aux = policy
 
         return act        

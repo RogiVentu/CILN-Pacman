@@ -53,6 +53,7 @@ class QLearningAgent(ReinforcementAgent):
           or the Q node value otherwise
         """
         "*** YOUR CODE HERE ***"
+        #just return 0.0 if first time or return the qvalue for this transition
         aux = (state,action)
         if aux not in self.qvalues:
             self.qvalues[aux] = 0.0
@@ -74,13 +75,13 @@ class QLearningAgent(ReinforcementAgent):
         max_action = ""
         maxi = -999999
         actions = self.getLegalActions(state)
-        if len(actions) == 0:
+        if len(actions) == 0: #as always if its terminal, so if has no childs, return 0.0
             return 0.0
 
         for a in actions:
             aux[a] = self.getQValue(state,a)
             if aux[a] > maxi:
-                maxi = aux[a]
+                maxi = aux[a]#save the max Qvalue of the nextStates s' and return it
                 max_action = a
 
         return maxi
@@ -98,14 +99,14 @@ class QLearningAgent(ReinforcementAgent):
         max_action = ""
         maxi = -999999
         actions = self.getLegalActions(state)
-        if len(actions) == 0:
+        if len(actions) == 0:#here if its terminal state return None
             return None
 
         for a in actions:
             aux[a] = self.getQValue(state,a)
             if aux[a] > maxi:
                 maxi = aux[a]
-                max_action = a
+                max_action = a #same as computeValueFromQValues, but we return the action, not the value
 
         return max_action
 
@@ -160,7 +161,7 @@ class QLearningAgent(ReinforcementAgent):
         - self.alpha (learning rate)
         - self.discount (discount rate)
         """
-
+        #get this values, and then compute the formula.
         alpha = self.alpha
         d = self.discount
         actual_qvalue = self.getQValue(state,action)
