@@ -197,7 +197,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
 
-        def min_value(gameState, depth, ghostIndex): #min player method, the ghosts.
+        def min_value(gameState, depth, ghostIndex, alpha, beta): #min player method, the ghosts.
             if gameState.isWin() or gameState.isLose():
                 return self.evaluationFunction(gameState);
 
@@ -205,26 +205,43 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             numGhosts = gameState.getNumAgents()-1 
             for action in gameState.getLegalActions(ghostIndex):
                 if ghostIndex is not numGhosts:
-                    min_aux = min(min_aux , min_value(gameState.generateSuccessor(ghostIndex, action), depth, ghostIndex+1))
+                    min_aux = min(min_aux , min_value(gameState.generateSuccessor(ghostIndex, action), depth, ghostIndex+1, alpha, beta))
                 else:
-                    min_aux = min(min_aux , max_value(gameState.generateSuccessor(ghostIndex, action), depth+1))
+                    min_aux = min(min_aux , max_value(gameState.generateSuccessor(ghostIndex, action), depth+1, alpha, beta))
+                if min_aux < alpha:
+                    return min_aux
+                beta = min(beta, min_aux)
             return min_aux
 
-        def max_value(gameState, depth):
+        def max_value(gameState, depth, alpha, beta):
             if gameState.isWin() or gameState.isLose() or depth == self.depth:
                 return self.evaluationFunction(gameState)
 
             max_aux = float('-Inf')
             for action in gameState.getLegalActions(0):
-                max_aux = max(max_aux , min_value(gameState.generateSuccessor(0, action), depth, 1))
+                max_aux = max(max_aux , min_value(gameState.generateSuccessor(0, action), depth, 1,alpha,beta))
+                if max_aux > beta:
+                    return max_aux
+                alpha = max(alpha, max_aux)
             return max_aux
 
         min_value_action = [] 
+        alpha =float('-Inf')
+        beta = float('Inf')
         for action in gameState.getLegalActions(0):
-            min_value_action.append((min_value(gameState.generateSuccessor(0, action), 0, 1), action))
+            min_value_action.append((min_value(gameState.generateSuccessor(0, action), 0, 1, alpha, beta), action))
+
+            #we chech here the maximum value of the actions done for now, and if there are a value higher than beta
+            #we return the action
+            max_val = max(min_value_action,key=lambda item:item[0])[0]
+            max_action = max(min_value_action,key=lambda item:item[0])[1]
+            if max_val > beta:
+                return max_action
+            #then we change the alpha if its bigger than the actual alpha
+            alpha = max(alpha, max_val)
+
         return max(min_value_action,key=lambda item:item[0])[1]
 
-        util.raiseNotDefined()
         util.raiseNotDefined()
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
