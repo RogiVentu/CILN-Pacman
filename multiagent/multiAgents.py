@@ -160,7 +160,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
             min_aux = float('Inf')
             numGhosts = gameState.getNumAgents()-1 #because we just want the ghosts
             #as the labs says: the minimax tree will have multiple min layers (one for each ghost) for every max layer.
-            #so we need to recursively all the ghosts and the last one just call max_value method
+            #so we need to recursively all the ghosts and the last one just call max_value method.
             for action in gameState.getLegalActions(ghostIndex):
                 if ghostIndex is not numGhosts:
                     min_aux = min(min_aux , min_value(gameState.generateSuccessor(ghostIndex, action), depth, ghostIndex+1))
