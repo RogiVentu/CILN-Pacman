@@ -60,10 +60,37 @@ def NWordsforAllFiles(N):
  	
  	return n_words
 
+def getFeaturedVectors(n_words):
 
+	feat_vectors = {}
 
+	for filename in os.listdir("dataset/"):
+		n_vector = []
+		file = open("dataset/" + filename)
+ 		text = cleanText(file)
+ 		data = getOcurrencesText(text)
+ 		for w in data:
+ 			if w in n_words:
+ 				div = float(data[w])/float(len(data)) * 100
+ 				percent = float("{0:.2f}".format(div))
+ 				n_vector.append(percent)
+ 		feat_vectors[filename] = n_vector
+
+ 		file.close()
+
+ 	return feat_vectors
+
+# N paraules amb mes utilitzades en tot el corpus
 N = 5
-print NWordsforAllFiles(N)
+n_words = NWordsforAllFiles(N)
+print n_words
+
+# calcul de vectors de features (N dimensions) per cada instancia
+feat_vectors = getFeaturedVectors(n_words)
+print feat_vectors
+
+
+
 '''
 wordsSum = {}
 
